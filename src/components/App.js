@@ -1,5 +1,6 @@
 import React from "react"
 import Card from "./Card"
+import Game from "./Game"
 class App extends React.Component{
     constructor(props){
         super(props)
@@ -9,9 +10,7 @@ class App extends React.Component{
     render(){
         return (
             <div className="App">
-                <h1>Test</h1>
-                <Card code="2D"></Card>
-                <Card code="8D"></Card>
+                <Game/>
             </div>
         )
     }

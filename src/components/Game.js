@@ -1,5 +1,6 @@
 import React from "react"
 import Card from "./Card"
+import Player from "./Player"
 
 class Game extends React.Component{
 
@@ -8,7 +9,14 @@ class Game extends React.Component{
     }
 
     render(){
-        return(<br></br>)
+        return(
+            <div className="Game">
+                <Player/>
+                <Player/>
+            
+            
+            </div>
+        )
     }
 }
 

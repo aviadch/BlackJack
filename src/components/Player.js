@@ -10,10 +10,12 @@ class Player extends React.Component{
 
 
     render(){
-        const cards = this.props.cards.map()
+       
         return (
             <div className="player">
-
+                <h1>Test</h1>
+                <Card code="2D"></Card>
+                <Card code="8D"></Card>
 
             </div>
 
