@@ -18,8 +18,9 @@ class Game extends React.Component {
     this.draw = this.draw.bind(this);
     this.stayHandler = this.stayHandler.bind(this);
     this.hitHandler = this.hitHandler.bind(this);
-    this.dealerStopTerm = this.dealerStopTerm.bind(this)
-    this.dealerDraw = this.dealerDraw.bind(this)
+    this.dealerStopTerm = this.dealerStopTerm.bind(this);
+    this.dealerDraw = this.dealerDraw.bind(this);
+    this.announceWinner = this.announceWinner.bind(this);
     //this.startGame = this.startGame.bind(this);
     this.newGame = this.newGame.bind(this);
   }
@@ -66,69 +67,79 @@ class Game extends React.Component {
           let newCardCode = data.cards[0]["code"];
           let newState = { players: { ...prevState.playersCards } };
           newState.players[playerName].push(newCardCode);
-          console.log("New Card code: " + newCardCode);
+          //console.log("New Card code: " + newCardCode);
           //TODO Game.cardMapper(newCardCode)
           return newState;
         });
       })
       .catch(console.log);
 
-    return promiseToUpdateState
+    return promiseToUpdateState;
   }
 
   hitHandler(playerName) {
-
     //we hit just if its player turn
-    if(this.state.turn!==playerName){
-      alert("not your turn basterd")
-    }
-    else{
+    if (this.state.turn !== playerName) {
+      alert("not your turn basterd");
+    } else {
       //We draw
-      let promiseToDraw = this.draw(playerName)
+      let promiseToDraw = this.draw(playerName);
 
       //After the draw we update state if busted:
-      promiseToDraw.then(data=>{
-        let playerScore = Game.calcScore(this.state.playersCards[playerName])
-        if (playerScore ==="Bust"){
-          this.setState({turn:"Bust"})
+      promiseToDraw.then(data => {
+        let playerScore = Game.calcScore(this.state.playersCards[playerName]);
+        if (playerScore === "Bust") {
+          this.setState({ turn: "Bust" });
+          this.announceWinner()
         }
-      })
+      });
     }
+  }
 
+  announceWinner() {
+    //Announce winner:
+    let isPlayerWin = Game.isPlayerWin(
+      Game.calcScore(this.state.playersCards["Dealer"]),
+      Game.calcScore(this.state.playersCards["Aviad"])
+    );
+    this.setState({ winner: isPlayerWin ? "Aviad" : "Dealer" });
   }
 
   stayHandler() {
+    //Changing turns
     this.setState({ turn: "Dealer" });
-    this.dealerDraw()
+
+    //Dealer draw untill finish
+    this.dealerDraw(()=>this.announceWinner())
+
+    
   }
 
-  dealerStopTerm(){
-    let curDealerScore = Game.calcScore(this.state.playersCards["Dealer"])
+  dealerStopTerm() {
+    let curDealerScore = Game.calcScore(this.state.playersCards["Dealer"]);
 
     //If black jack, if 17 or more, if busted
-    if (curDealerScore==="BJ" || curDealerScore==="Bust" || curDealerScore>=17){
-      return true
+    if (
+      curDealerScore === "BJ" ||
+      curDealerScore === "Bust" ||
+      curDealerScore >= 17
+    ) {
+      return true;
+    } else {
+      return false;
     }
-    else{
-      return false
-    }
-
   }
 
   //BlackJack logic -dealer will draw untill he get 17 or busted
-  dealerDraw() {
+  dealerDraw(finishCallback) {
+    console.log("here11111")
+
     if(!this.dealerStopTerm()){
-      this.draw("Dealer").then((message)=>{
-        setTimeout(this.dealerDraw,1000)
-      })
-
-    }  
-    else{
-      return
+      this.draw("Dealer").then(this.dealerDraw)
     }
-      
+    debugger
     
-
+    
   }
 
   /*startGame() {
@@ -158,14 +169,14 @@ class Game extends React.Component {
       retValue = Number(cardValue);
     }
 
-    console.log("Mapper observation:" + retValue);
+    //console.log("Mapper observation:" + retValue);
     return retValue;
   }
 
   //BlackJack logic - on given two scores which one is gonna win the game?
   // BJ - blackjack which mean 21 from pic+ace
   static isPlayerWin(dealer, player) {
-    console.log("dealer: " + dealer + " player: " + player);
+    //console.log("dealer: " + dealer + " player: " + player);
     let playerWin = false;
     //  dealer with BJ - Dealer win
     if (dealer === "BJ") {
@@ -191,7 +202,7 @@ class Game extends React.Component {
     ) {
       playerWin = true;
     }
-    console.log("did player win: " + playerWin);
+    //console.log("did player win: " + playerWin);
     return playerWin;
   }
 
@@ -211,11 +222,11 @@ class Game extends React.Component {
     let options = [];
     //stop term - no aces
     if (cardList.every(x => x !== "A")) {
-      console.log("No Aces!");
+      //console.log("No Aces!");
       options.push(cardList);
       return options;
     } else {
-      console.log("Aces!");
+      //console.log("Aces!");
       //replace the first ace with 1\11 and re run
       let i = cardList.indexOf("A");
 
@@ -228,20 +239,20 @@ class Game extends React.Component {
       let v1 = Game.aceOptions(oneOption);
       let v11 = Game.aceOptions(elevenOption);
 
-      console.log(v1);
-      console.log(v11);
+      //console.log(v1);
+     // console.log(v11);
 
       options.push(...v1);
       options.push(...v11);
 
-      console.log(options);
+      //console.log(options);
       return options;
     }
   }
 
   //Given options according to aces we chose the best
   static chooseBestOption(optionsList) {
-    console.log(optionsList);
+    //console.log(optionsList);
 
     //Get raw score for each list
     let sumsOfOptions = optionsList.map(optionArray => {
@@ -249,16 +260,16 @@ class Game extends React.Component {
         // TODO Game.isBlackJack(optionArray)) {
         return "BJ";
       } else {
-        console.log(optionArray);
+        //console.log(optionArray);
         let rawSum = optionArray.reduce((a, b) => {
-          console.log(b);
+          //console.log(b);
           return a + b;
         }, 0);
-        console.log("rawSum:" + rawSum);
+        //console.log("rawSum:" + rawSum);
         return rawSum;
       }
     });
-    console.log(sumsOfOptions);
+    //console.log(sumsOfOptions);
 
     //reduce by checking each element against each other like it was the dealer
     let chosen = sumsOfOptions.reduce((prev, cur) => {
@@ -272,18 +283,18 @@ class Game extends React.Component {
     return chosen === -1 ? "Bust" : chosen;
   }
   static calcScore(cardList) {
-    console.log("cardList: " + cardList);
+    //console.log("cardList: " + cardList);
     //get only score (numbers and A)
     const scoreOnlyArray = cardList.map(Game.cardMapper);
 
-    console.log("ScoreOnly: " + scoreOnlyArray);
+    //console.log("ScoreOnly: " + scoreOnlyArray);
 
     let options = Game.aceOptions(scoreOnlyArray);
 
     let bestOptionSum = Game.chooseBestOption(options);
-    console.log(
+    /*console.log(
       "Best option: " + bestOptionSum + "Based on options: " + options
-    );
+    );*/
 
     //BlackJack check:
     if (bestOptionSum === 21 && cardList.length === 2) {
@@ -334,7 +345,9 @@ class Game extends React.Component {
       />
     );*/
 
-    let winnerMessage = this.state.winner ? <h1>The winner is:{this.state.winner}</h1> : null
+    let winnerMessage = this.state.winner ? (
+      <h1>The winner is:{this.state.winner}</h1>
+    ) : null;
 
     return (
       <div className="Game">
