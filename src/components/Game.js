@@ -52,7 +52,6 @@ class Game extends React.Component {
 
   //Draw a card from  the current deck for the playername
   draw(playerName) {
-    //debugger
     let promiseToDraw = fetch(
       "https://deckofcardsapi.com/api/deck/" + this.state.deckId + "/draw/"
     );
@@ -90,29 +89,29 @@ class Game extends React.Component {
         let playerScore = Game.calcScore(this.state.playersCards[playerName]);
         if (playerScore === "Bust") {
           this.setState({ turn: "Bust" });
-          this.announceWinner()
+          this.announceWinner();
         }
       });
     }
   }
 
   announceWinner() {
+    debugger;
     //Announce winner:
-    let isPlayerWin = Game.isPlayerWin(
-      Game.calcScore(this.state.playersCards["Dealer"]),
-      Game.calcScore(this.state.playersCards["Aviad"])
-    );
+    let playerScore = Game.calcScore(this.state.playersCards["Aviad"]);
+    let dealerScore = Game.calcScore(this.state.playersCards["Dealer"]);
+    let isPlayerWin = Game.isPlayerWin(dealerScore, playerScore);
     this.setState({ winner: isPlayerWin ? "Aviad" : "Dealer" });
   }
 
   stayHandler() {
+    //If we busted - we cant do nothing
+
     //Changing turns
     this.setState({ turn: "Dealer" });
 
     //Dealer draw untill finish
-    this.dealerDraw(()=>this.announceWinner())
-
-    
+    this.dealerDraw(() => this.announceWinner());
   }
 
   dealerStopTerm() {
@@ -132,14 +131,13 @@ class Game extends React.Component {
 
   //BlackJack logic -dealer will draw untill he get 17 or busted
   dealerDraw(finishCallback) {
-    console.log("here11111")
-    
-    if(!this.dealerStopTerm()){
-      this.draw("Dealer").then(()=>setTimeout(this.dealerDraw,1000))
+    if (!this.dealerStopTerm()) {
+      this.draw("Dealer").then(() =>
+        setTimeout(() => this.dealerDraw(finishCallback), 1000)
+      );
+    } else {
+      finishCallback();
     }
-    
-    
-    
   }
 
   /*startGame() {
@@ -197,7 +195,7 @@ class Game extends React.Component {
 
     // dealer is busted and player isnt - Player win
     else if (
-      (dealer > 21 && player <= 21) ||
+      ((dealer > 21 || dealer==="Bust") && player <= 21) ||
       (player <= 21 && dealer < player)
     ) {
       playerWin = true;
@@ -240,7 +238,7 @@ class Game extends React.Component {
       let v11 = Game.aceOptions(elevenOption);
 
       //console.log(v1);
-     // console.log(v11);
+      // console.log(v11);
 
       options.push(...v1);
       options.push(...v11);
