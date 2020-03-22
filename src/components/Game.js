@@ -133,11 +133,11 @@ class Game extends React.Component {
   //BlackJack logic -dealer will draw untill he get 17 or busted
   dealerDraw(finishCallback) {
     console.log("here11111")
-
+    
     if(!this.dealerStopTerm()){
-      this.draw("Dealer").then(this.dealerDraw)
+      this.draw("Dealer").then(()=>setTimeout(this.dealerDraw,1000))
     }
-    debugger
+    
     
     
   }
