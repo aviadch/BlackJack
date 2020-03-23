@@ -1,15 +1,14 @@
 import React from "react"
-import Card from "./Card"
 import Game from "./Game"
 class App extends React.Component{
-    constructor(props){
+    /*constructor(props){
         super(props)
 
-    }
+    }*/
 
     render(){
         return (
-            <div className="App">
+            <div className="app">
                 <Game/>
             </div>
         )
