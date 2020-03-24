@@ -2,6 +2,7 @@ import React from "react";
 import Card from "./Card";
 
 class Player extends React.Component {
+  //Constructor is useless
   /*constructor(props){
         super(props)
         
@@ -20,8 +21,8 @@ class Player extends React.Component {
       </div>
     );
 
-    if (this.props.name === "Dealer"){
-        buttons=<br></br>
+    if (this.props.name === "Dealer") {
+      buttons = <br></br>;
     }
 
     return (

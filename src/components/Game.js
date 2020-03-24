@@ -195,7 +195,7 @@ class Game extends React.Component {
 
     // dealer is busted and player isnt - Player win
     else if (
-      ((dealer > 21 || dealer==="Bust") && player <= 21) ||
+      ((dealer > 21 || dealer === "Bust") && player <= 21) ||
       (player <= 21 && dealer < player)
     ) {
       playerWin = true;
