@@ -31,11 +31,12 @@ class Game extends React.Component {
   }
 
   newGame() {
-    fetch("https://deckofcardsapi.com/api/deck/new/shuffle")
-      .then(res => res.json())
+    fetch("http://localhost:8081/newGame")
+      .then(resp => resp.text())
       .then(data => {
+        debugger;
         this.setState({
-          deckId: data["deck_id"],
+          deckId: data,
           playersCards: {
             Dealer: [],
             Aviad: []
